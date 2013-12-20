@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <easy/easy_atomic.h>
 
-#define NUM 20
+#define NUM 1
 #define N 100000
 
 easy_atomic_t lock;

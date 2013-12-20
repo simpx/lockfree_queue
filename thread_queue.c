@@ -4,48 +4,73 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-#define NUM 20
-#define N 100000
+#define CONSUMER_NUM 2
+#define PRODUCER_NUM 1
+#define N 20000
 
+int stop;
 queue_t queue;
 typedef struct Item {
     int value;
     node_t node;
 }Item;
 
-void func(void *args)
+void consumer(void *args)
+{
+    Item *it;
+    int i = 0;
+    while (stop == 0)
+    {
+        if ((it = queue_pop_entry(&queue, Item, node)) != NULL)
+        {
+            i++;
+            if (it->value == N - 1) {
+                stop = 1;
+                break;
+            }
+        }
+    }
+    printf("consume %d items\n", i);
+}
+
+void producer(void *args)
 {
     Item *it;
     int i;
-    for (i = 0; i < N; i++)
+    for (i = 0; i < N / PRODUCER_NUM; i++)
     {
         it = (Item *)malloc(sizeof(Item));
         memset(it, 0, sizeof(Item));
         it->value = i;
         queue_push(&queue, &it->node);
     }
+    printf("produce %d items\n", i);
 }
 
 int main()
 {
     int ret;
     int i;
-    long sum = 0;
-    pthread_t tid[NUM];
+    stop = 0;
+    pthread_t tid[CONSUMER_NUM + PRODUCER_NUM];
     queue_init(&queue);
-    for (i = 0; i < NUM; i++) {
-        ret = pthread_create(&tid[i], NULL, (void*)func, NULL);
+
+    for (i = 0; i < PRODUCER_NUM; i++) {
+        ret = pthread_create(&tid[i], NULL, (void*)producer, NULL);
     }
 
-    for (i = 0; i < NUM; i++) {
+    for (i = 0; i < PRODUCER_NUM; i++) {
+        pthread_join(tid[i], NULL);
+    }
+    printf("producer exit\n");
+
+    for (i = PRODUCER_NUM; i < CONSUMER_NUM + PRODUCER_NUM; i++) {
+        ret = pthread_create(&tid[i], NULL, (void*)consumer, NULL);
+    }
+
+    for (i = PRODUCER_NUM; i < CONSUMER_NUM + PRODUCER_NUM; i++) {
         pthread_join(tid[i], NULL);
     }
     printf("exit\n");
-    Item *it;
-    for (i = 0; i < NUM * N; i++) {
-        it = queue_pop_entry(&queue, Item, node);
-        sum += it->value;
-    }
-    printf("sum:%ld\n", sum);
     return 0;
 }
