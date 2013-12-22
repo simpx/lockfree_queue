@@ -1,6 +1,4 @@
 #include "queue.h"
-#include "stdio.h"
-#include <assert.h>
 
 void queue_init(queue_t *queue)
 {
