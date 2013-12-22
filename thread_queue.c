@@ -59,14 +59,15 @@ int main()
         ret = pthread_create(&tid[i], NULL, (void*)producer, NULL);
     }
 
-    for (i = 0; i < PRODUCER_NUM; i++) {
-        pthread_join(tid[i], NULL);
-    }
-    printf("producer exit\n");
 
     for (i = PRODUCER_NUM; i < CONSUMER_NUM + PRODUCER_NUM; i++) {
         ret = pthread_create(&tid[i], NULL, (void*)consumer, NULL);
     }
+
+    for (i = 0; i < PRODUCER_NUM; i++) {
+        pthread_join(tid[i], NULL);
+    }
+    printf("producer exit\n");
 
     for (i = PRODUCER_NUM; i < CONSUMER_NUM + PRODUCER_NUM; i++) {
         pthread_join(tid[i], NULL);

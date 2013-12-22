@@ -13,4 +13,4 @@ thread_list: list.c thread_list.c
 	gcc -g -Wall -lpthread -leasy -lm -o $@ $^
 
 clean:
-	rm queue
+	rm test_queue test_list thread_queue thread_list
