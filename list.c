@@ -20,6 +20,9 @@ list_node_t* list_pop(list_t *list)
     if (p != NULL) {
         list->head.next = p->next;
     }
+    if (list->tail == p) {
+        list->tail = &list->head; 
+    }
     return p;
 }
 
