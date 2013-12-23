@@ -1,0 +1,9 @@
+./avgtime 1000 ./thread_queue
+real    0m7.013s
+user    0m4.573s
+sys     0m0.654s
+
+./avgtime 1000 ./thread_list
+real    1m0.224s
+user    0m45.887s
+sys     0m12.330s
